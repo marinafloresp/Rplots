@@ -2,14 +2,15 @@
 #Can be used to either transform ggplot2 to interactive plots or to directly create interactive plots using plotly functions
 
 # Load Libraries
-library(ggplot2)
-library(dplyr)
-library(plotly)
+library(ggplot2) # for ggplot()
+library(dplyr) # for %>%
+library(plotly) # for plot_ly()
 library(hrbrthemes)
 library(htmlwidgets)
 library(tidyverse)
-library(viridis)
+library(viridis) # for viridis()
 library(heatmaply)
+library(reshape2) # for melt()
 
 #Load sample data (iris dataset)
 data(iris)
