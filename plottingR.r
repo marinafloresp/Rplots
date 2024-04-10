@@ -146,7 +146,38 @@ legend("bottomright", legend=c("Setosa","Versicolor", "Virginica"), col=c("#69b3
 box.plotly <- plot_ly(iris, x=~Species, y=~Petal.Width, type='box', color=~Species, colors=c("#69b3a2","#404080","#FFA500")) %>% layout(title="Plotly", xaxis=list(title='Sepal Width', showgrid=T), yaxis=list(title='Count', showgrid=T))
 box.plotly
 
+## Grouped Boxplot
 
+## ggplot2
+
+iris$Area <- c(rep(c("Low Area", "Mid Area", "Large Area"),50))
+gbox.ggplot <- ggplot(iris, aes(x=Area, y=Petal.Length, fill=Species)) + 
+  geom_boxplot()+ labs(title="Petal area per petal length")+ylab("Petal length" )+scale_fill_manual(values=c("#69b3a2","#404080","#FFA500"))
+gbox.ggplot
+
+## base R
+
+bop<-boxplot(Petal.Length~Species*Area, data=iris,
+             col = c("#69b3a2","#404080","#FFA500"), 
+             main = "Petal area per petal length", 
+             xlab = "Area", 
+             ylab = "Petal Length",   
+             outline = TRUE,    # Optional: Show outliers
+             horizontal = FALSE, xaxt = "n")
+areas <- c("Large Area", "Mid Area","Low Area" )
+bop <- axis(1, 
+            at = c(2,5,8.5), 
+            labels = areas, 
+            tick=TRUE , cex=0.3)
+bop<-legend("bottomright", legend = unique(iris$Species), 
+            col=c("#69b3a2","#404080","#FFA500"),
+            pch = 15, bty = "n", pt.cex = 2, cex = 1.2,  horiz = F, inset = c(0, 0.2))
+
+
+## plotly
+gbox.plotly <- plot_ly(iris, x = interaction(iris$Area,iris$Species), y = iris$Petal.Length, color = iris$Species,type = "box",colors=c("#69b3a2","#404080","#FFA500")) %>% 
+  layout(title = "Petal area per petal length",yaxis = list(title='Petal Length'),xaxis = list(title='Petal Area',categoryarray = areas))
+gbox.plotly
 
 
 #### Heatmaps
