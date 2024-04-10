@@ -11,6 +11,7 @@ library(tidyverse)
 library(viridis) # for viridis()
 library(heatmaply)
 library(reshape2) # for melt()
+library(pheatmap) # for pheatmap()
 
 #Load sample data (iris dataset)
 data(iris)
