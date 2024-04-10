@@ -22,14 +22,14 @@ variables <- names(iris)
 
 ## ggplot2
 
-ggplot.1 <- ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+scatt.ggplot <- ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
   geom_point(color="#FFA500", alpha=0.8, size=3) +
   ggtitle("Petal length and width") +
   #theme_ipsum() + optional theme
   theme(plot.title = element_text(size=15)) +
   ylab('Petal width') +
   xlab('Petal length')
-ggplot.1
+scatt.ggplot
 
 ## Base R
 
@@ -40,21 +40,18 @@ grid(nx = 11, ny = 8)
 
 ## Plotly
 
-plotly.1 <- plot_ly(data = iris, x = ~Petal.Length, y = ~Petal.Width,type="scatter", opacity=0.7,mode="markers",text = ~Species,size = 3,
+scatt.plotly <- plot_ly(data = iris, x = ~Petal.Length, y = ~Petal.Width,type="scatter", opacity=0.7,mode="markers",text = ~Species,size = 3,
                     marker=list(color="#FFA500",line = list(color = "#FFA500",
                                                              width = 2)))%>% 
   layout(title = "Petal length and width",
          yaxis = list(title='Petal Length'),
          xaxis = list(title='Petal width'))
-plotly.1
-
-
-
+scatt.plotly
 
 #### Multi-histogram
 
 ##ggplot2
-ggplot.2 <- ggplot(iris, aes(x=Sepal.Width, fill=Species)) +
+multhist.ggplot <- ggplot(iris, aes(x=Sepal.Width, fill=Species)) +
   geom_histogram(color="#e9ecef", alpha=0.6, position = 'identity') +
   scale_fill_manual(values=c("#69b3a2", "#FFA500","#404080" )) +
   #theme_ipsum() +
@@ -62,7 +59,7 @@ ggplot.2 <- ggplot(iris, aes(x=Sepal.Width, fill=Species)) +
   ggtitle("Sepal width")+
   ylab('Count') +
   xlab('Sepal width')
-ggplot.2
+multhist.ggplot
 
 ##base R
 setosa <- iris[iris$Species=="setosa",]$Sepal.Width
@@ -85,19 +82,14 @@ legend("topright", legend=c("Setosa","Versicolor", "Virginica"), col=c("#69b3a2"
 
 
 ## plotly 
-plotly.2 <- plot_ly(alpha = 0.6) %>% 
+multhist.plotly <- plot_ly(alpha = 0.6) %>% 
   add_histogram(x = setosa, opacity=0.6,marker= list(color ="#404080",line =list(color="#e9ecef", width=1)), name= "Setosa") %>% 
   add_histogram(x = versicol,opacity=0.6,marker= list(color = "#69b3a2",line =list(color="#e9ecef", width=1)),name= "Versicolor") %>% 
   add_histogram(x = virginica,opacity=0.6,marker= list(color = "#FFA500",line =list(color="#e9ecef", width=1)),name= "Virginica") %>% 
   
   layout(barmode = "overlay", title="Histogram example", xaxis = list(title = "Value",showgrid = TRUE), yaxis = list(title = "Count",showgrid = TRUE)
   )
-plotly.2 
-
-
-
-
-
+multhist.plotly
 
 #### Simple histogram
 
@@ -127,7 +119,6 @@ hist.plotly
 
 
 
-
 #### Simple boxplot
 
 ## ggplot2
@@ -141,7 +132,6 @@ box.ggplot <- ggplot(iris, aes(x=Species, y=Petal.Width, fill=Species)) +
   theme_minimal()
 box.ggplot
 
-
 ## base R
 plot.new() # create blank plot
 grid(nx = NULL, ny = NULL) # add grid lines
@@ -149,8 +139,45 @@ par(new = TRUE) # to ensure boxplot is added to same plot
 boxplot(Petal.Width ~ Species, data=iris, col=c("#69b3a2", "#FFA500","#404080"), bty='n', xlab="Species", ylab="Petal length", main="base R")
 legend("bottomright", legend=c("Setosa","Versicolor", "Virginica"), col=c("#69b3a2","#404080","#FFA500"), pt.cex=2, pch=15)
 
-
 ## plotly
 # 30 bins
 box.plotly <- plot_ly(iris, x=~Species, y=~Petal.Width, type='box', color=~Species, colors=c("#69b3a2","#404080","#FFA500")) %>% layout(title="Plotly", xaxis=list(title='Sepal Width', showgrid=T), yaxis=list(title='Count', showgrid=T))
 box.plotly
+
+
+
+
+#### Heatmaps
+
+petal.length <- unique(sort(iris$Petal.Length))
+petal.width <- unique(sort(iris$Petal.Width))
+areaPetal <- matrix(data=NA, nrow = length(petal.length), ncol = length(petal.width))
+for(i in 1:length(petal.length)){
+  for(j in 1:length(petal.width)){
+    area=petal.length[i]*petal.width[j]
+    areaPetal[i,j]=area
+  }
+}
+rownames(areaPetal)<- as.character(petal.length)
+colnames(areaPetal)<- as.character(petal.width )
+
+## ggplot2
+
+areaPetal.m <- melt(areaPetal)
+colnames(areaPetal.m) <- c("Length", "Width", "Area")
+heatm.ggplot <-ggplot(areaPetal.m, aes(x=Width, y=Length)) + 
+  geom_tile(aes(fill=Area)) +scale_fill_gradientn(colors = hcl.colors(50, "BluYl")) +ggtitle("Petal area")
+heatm.ggplot
+
+## base R/pheatmap
+pheatmap(areaPetal, cluster_rows = F, cluster_cols = F, main="Petal area",color = hcl.colors(50, "BluYl"))
+
+## plotly
+heatm.plotly <- plot_ly(
+  x = petal.width, y =petal.length,
+  z = areaPetal, type = "heatmap"
+) %>% layout(title = "Petal area",
+        yaxis = list(title='Petal Length'),
+        xaxis = list(title='Petal width'))
+heatm.plotly
+
