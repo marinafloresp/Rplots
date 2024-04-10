@@ -48,6 +48,9 @@ plotly.1 <- plot_ly(data = iris, x = ~Petal.Length, y = ~Petal.Width,type="scatt
          xaxis = list(title='Petal width'))
 plotly.1
 
+
+
+
 #### Multi-histogram
 
 ##ggplot2
@@ -90,3 +93,34 @@ plotly.2 <- plot_ly(alpha = 0.6) %>%
   layout(barmode = "overlay", title="Histogram example", xaxis = list(title = "Value",showgrid = TRUE), yaxis = list(title = "Count",showgrid = TRUE)
   )
 plotly.2 
+
+
+
+
+
+
+#### Simple histogram
+
+setosa <- iris[iris$Species=="setosa",]
+
+## ggplot2
+hist.ggplot <- ggplot(setosa, aes(x=Sepal.Width)) +
+  geom_histogram(fill=alpha("#69b3a2",0.6), bins=20)+ # 20 bins
+  theme(plot.title = element_text(size=15)) +
+  ggtitle("ggplot")+
+  ylab('Count') +
+  xlab('Sepal width')+
+  theme_minimal()
+hist.ggplot
+
+
+## base R
+hist(setosa$Sepal.Width, breaks=30, border="#e9ecef", col=alpha("#69b3a2",0.6),xlab="height", ylab="Count", main="base R")
+grid(nx = 11, ny = 8)
+# 30 breaks
+
+
+## plotly
+# 30 bins
+hist.plotly <- plot_ly(x=~setosa$Sepal.Width, type='histogram', nbinsx=30, marker=list(color=alpha("#69b3a2",0.6))) %>% layout(title="Plotly", xaxis=list(title='Sepal Width', showgrid=T), yaxis=list(title='Count', showgrid=T))
+hist.plotly
