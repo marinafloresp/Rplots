@@ -124,3 +124,33 @@ grid(nx = 11, ny = 8)
 # 30 bins
 hist.plotly <- plot_ly(x=~setosa$Sepal.Width, type='histogram', nbinsx=30, marker=list(color=alpha("#69b3a2",0.6))) %>% layout(title="Plotly", xaxis=list(title='Sepal Width', showgrid=T), yaxis=list(title='Count', showgrid=T))
 hist.plotly
+
+
+
+
+#### Simple boxplot
+
+## ggplot2
+box.ggplot <- ggplot(iris, aes(x=Species, y=Petal.Width, fill=Species)) +
+  geom_boxplot()+
+  scale_fill_manual(values=c("#69b3a2", "#FFA500","#404080" )) +
+  theme(plot.title = element_text(size=15)) +
+  ggtitle("ggplot")+
+  ylab('Petal length') +
+  xlab('Species')+
+  theme_minimal()
+box.ggplot
+
+
+## base R
+plot.new() # create blank plot
+grid(nx = NULL, ny = NULL) # add grid lines
+par(new = TRUE) # to ensure boxplot is added to same plot
+boxplot(Petal.Width ~ Species, data=iris, col=c("#69b3a2", "#FFA500","#404080"), bty='n', xlab="Species", ylab="Petal length", main="base R")
+legend("bottomright", legend=c("Setosa","Versicolor", "Virginica"), col=c("#69b3a2","#404080","#FFA500"), pt.cex=2, pch=15)
+
+
+## plotly
+# 30 bins
+box.plotly <- plot_ly(iris, x=~Species, y=~Petal.Width, type='box', color=~Species, colors=c("#69b3a2","#404080","#FFA500")) %>% layout(title="Plotly", xaxis=list(title='Sepal Width', showgrid=T), yaxis=list(title='Count', showgrid=T))
+box.plotly
