@@ -18,7 +18,11 @@ data(iris)
 summary(iris)
 dim(iris)
 
-# Plot parameters ==============================================================
+
+
+
+
+#1. Plot parameters ============================================================
 # Examples: changing background colour, margins, arranging subplots 
 
 #a) base R ---------------------------------------------------------------------
@@ -51,7 +55,10 @@ myplots <- list(p1,p2)
 grid.arrange(myplots[[1]], myplots[[2]], ncol=2)
 
 
-# Changing point colour and character type =====================================
+
+
+
+#2. Changing point colour and character type ===================================
 #a) base R ---------------------------------------------------------------------
 plot(iris$Petal.Length, iris$Petal.Width) # default: col='black', pch=1
 plot(iris$Petal.Length, iris$Petal.Width, col="#FFA500", pch=16)
@@ -82,7 +89,10 @@ ggplot(iris, aes(x=Petal.Length, y=Petal.Width, group=Species)) +
   geom_point(aes(shape=Species, color=Species))
 
 
-#1. Scatter plot ===============================================================
+
+
+
+#3. Scatter plot ===============================================================
 
 #a) base R ---------------------------------------------------------------------
 plot(iris$Petal.Length, iris$Petal.Width, main = "Petal length and width",
@@ -111,7 +121,7 @@ scatt.plotly
 
 
 
-#2. Simple histogram ===========================================================
+#4. Simple histogram ===========================================================
 setosa <- iris[iris$Species=="setosa",]
 
 #a) base R ---------------------------------------------------------------------
@@ -138,7 +148,7 @@ hist.plotly
 
 
 
-#3. Multi-histogram ============================================================
+#5. Multi-histogram ============================================================
 
 #a) base R ---------------------------------------------------------------------
 setosa <- iris[iris$Species=="setosa",]$Sepal.Width
@@ -182,7 +192,7 @@ multhist.plotly
 
 
 
-#4. Simple boxplot =============================================================
+#6. Simple boxplot =============================================================
 
 #a) base R ---------------------------------------------------------------------
 plot.new() # create blank plot
@@ -211,7 +221,7 @@ box.plotly
 
 
 
-#5. Grouped boxplot ============================================================
+#7. Grouped boxplot ============================================================
 iris$Area <- c(rep(c("Low Area", "Mid Area", "Large Area"),50))
 
 #a) base R ---------------------------------------------------------------------
@@ -245,7 +255,7 @@ gbox.plotly
 
 
 
-#6. Heatmaps ===================================================================
+#8. Heatmaps ===================================================================
 petal.length <- unique(sort(iris$Petal.Length))
 petal.width <- unique(sort(iris$Petal.Width))
 areaPetal <- matrix(data=NA, nrow = length(petal.length), ncol = length(petal.width))
