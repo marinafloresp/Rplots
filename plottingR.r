@@ -18,8 +18,68 @@ data(iris)
 summary(iris)
 dim(iris)
 
+# Plot parameters ==============================================================
+# Examples: changing background colour, margins, arranging subplots 
+
+#a) base R ---------------------------------------------------------------------
+# parameters changes within par()
+plot(iris$Petal.Length, iris$Petal.Width)
+par(bg="lightblue", mar=c(5.1, 10, 4.1, 2.1)) # change bg to lightblue and widen left margin to 10
+# bg = background colour; mar = margins (order: bottom, left, top, right)
+plot(iris$Petal.Length, iris$Petal.Width)
+par(bg="white", mar=c(5.1, 4.1, 4.1, 2.1)) # reset
+
+par(mfrow=c(1,2))
+plot(iris$Petal.Length, iris$Petal.Width, main='Plot 1')
+plot(iris$Sepal.Length, iris$Petal.Width, main='Plot 2')
+par(mfrow=c(1,1)) # reset
 
 
+#b) ggplot2 --------------------------------------------------------------------
+# parameters changed within theme()
+p1 <- ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point() +
+  theme(panel.background=element_rect(fill="lightblue"),
+        plot.margin = unit(c(5.5,5.5,5.5,50), "pt")) # margin order: top, right, bottom, left. default = c(5.5,5.5,5.5,5.5)
+
+p2 <- ggplot(iris, aes(x=Sepal.Length, y=Petal.Width)) +
+  geom_point() +
+  theme(panel.background=element_rect(fill="lightblue"),
+        plot.margin = unit(c(5.5,5.5,5.5,50), "pt")) # margin order: top, right, bottom, left. default = c(5.5,5.5,5.5,5.5)
+
+myplots <- list(p1,p2)
+grid.arrange(myplots[[1]], myplots[[2]], ncol=2)
+
+
+# Changing point colour and character type =====================================
+#a) base R ---------------------------------------------------------------------
+plot(iris$Petal.Length, iris$Petal.Width) # default: col='black', pch=1
+plot(iris$Petal.Length, iris$Petal.Width, col="#FFA500", pch=16)
+
+# changing conditionally based on Species
+iris$Species <- as.factor(iris$Species)
+iris$Species
+c("#69b3a2","#404080","#FFA500")[iris$Species]
+
+# change colour depending on Species
+plot(iris$Petal.Length, iris$Petal.Width, col=c("#69b3a2","#404080","#FFA500")[iris$Species])
+# change point character depending on Species
+plot(iris$Petal.Length, iris$Petal.Width, pch=c(1,2,3)[iris$Species])
+# change colour and pch simultaneously
+plot(iris$Petal.Length, iris$Petal.Width, col=c("#69b3a2","#404080","#FFA500")[iris$Species], pch=c(1,2,3)[iris$Species])
+
+
+#b) ggplot2 --------------------------------------------------------------------
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point(color="#FFA500", shape=3) # default: col='black', pch=16
+
+# just changing colour by Species can be achieved using ggplot(aes(color=Species))
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width, color=Species)) +
+  geom_point()
+
+# but to also change shape, instead set aes(group=Species)
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width, group=Species)) +
+  geom_point(aes(shape=Species, color=Species))
 
 
 #1. Scatter plot ===============================================================
