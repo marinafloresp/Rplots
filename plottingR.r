@@ -61,10 +61,47 @@ myplots <- list(p1,p2)
 grid.arrange(myplots[[1]], myplots[[2]], ncol=2)
 
 
+#2. Plot themes ================================================================
+# Examples: built-in themes, own customised theme 
+
+#a) ggplot2 --------------------------------------------------------------------
+# default ggplot2 theme
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point() + ggtitle("Petal length and width") 
+
+# minimal theme
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point()+ggtitle("Petal length and width")+ theme_minimal() 
+
+# bw theme
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point()+ggtitle("Petal length and width")+theme_bw() 
+
+# no theme
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point() + ggtitle("Petal length and width") +theme_void()
+
+# customised theme
+
+my_theme <- function(){
+  theme(
+    #border
+    panel.border = element_rect(colour = "steelblue", fill = NA, linetype = 1),
+    #background
+    panel.background = element_rect(fill = "aliceblue"),
+    #axis text
+    axis.text = element_text(colour = "black", face = "italic"),
+    axis.title = element_text(colour = "black",face = "italic"),
+    #plot title
+    title= element_text(colour = "black", face = "bold.italic")
+    )
+}
+# add our customised theme to any ggplot2, it only needs to be defined once
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point() + ggtitle("Petal length and width")  + my_theme()
 
 
-
-#2. Changing point colour and character type ===================================
+#3. Changing point colour and character type ===================================
 #a) base R ---------------------------------------------------------------------
 plot(iris$Petal.Length, iris$Petal.Width) # default: col='black', pch=1
 plot(iris$Petal.Length, iris$Petal.Width, col="#FFA500", pch=16)
@@ -72,7 +109,10 @@ plot(iris$Petal.Length, iris$Petal.Width, col="#FFA500", pch=16)
 # changing conditionally based on Species
 iris$Species <- as.factor(iris$Species)
 iris$Species
-c("red","blue","green")[iris$Species]
+# colors can be specified by name to be assigned to each level of Species
+c("darkcyan","darkblue","orange")[iris$Species]
+
+# or by hex code 
 c("#69b3a2","#404080","#FFA500")[iris$Species]
 
 # change colour depending on Species
@@ -102,7 +142,7 @@ ggplot(iris, aes(x=Petal.Length, y=Petal.Width, group=Species)) +
 
 
 
-#3. Scatter plot ===============================================================
+#4. Scatter plot ===============================================================
 
 #a) base R ---------------------------------------------------------------------
 plot(iris$Petal.Length, iris$Petal.Width, main = "Petal length and width",
@@ -131,7 +171,7 @@ scatt.plotly
 
 
 
-#4. Simple histogram ===========================================================
+#5. Simple histogram ===========================================================
 setosa <- iris[iris$Species=="setosa",]
 
 #a) base R ---------------------------------------------------------------------
@@ -158,7 +198,7 @@ hist.plotly
 
 
 
-#5. Multi-histogram ============================================================
+#6. Multi-histogram ============================================================
 
 #a) base R ---------------------------------------------------------------------
 setosa <- iris[iris$Species=="setosa",]$Sepal.Width
@@ -202,7 +242,7 @@ multhist.plotly
 
 
 
-#6. Simple boxplot =============================================================
+#7. Simple boxplot =============================================================
 
 #a) base R ---------------------------------------------------------------------
 plot.new() # create blank plot
@@ -231,7 +271,7 @@ box.plotly
 
 
 
-#7. Grouped boxplot ============================================================
+#8. Grouped boxplot ============================================================
 iris$Area <- c(rep(c("Low Area", "Mid Area", "Large Area"),50))
 areas <- c("Large Area", "Mid Area","Low Area" )
 
@@ -240,12 +280,12 @@ par(mar=c(10, 4.1, 4.1, 2.1))
 boxplot(Petal.Length~Species*Area, data=iris, las=3)
 
 boxplot(Petal.Length~Species*Area, data=iris,
-             col = c("#69b3a2","#404080","#FFA500"), 
-             main = "Petal area per petal length", 
-             xlab = "Area", 
-             ylab = "Petal Length",   
-             outline = TRUE,    # Optional: Show outliers
-             horizontal = FALSE, xaxt = "n")
+        col = c("#69b3a2","#404080","#FFA500"), 
+        main = "Petal area per petal length", 
+        xlab = "Area", 
+        ylab = "Petal Length",   
+        outline = TRUE,    # Optional: Show outliers
+        horizontal = FALSE, xaxt = "n")
 axis(1, at = c(2,5,8.5), labels = areas, tick=TRUE , cex=0.3)
 legend("bottomright", legend = unique(iris$Species), col=c("#69b3a2","#404080","#FFA500"), pch = 15, bty = "n", pt.cex = 2, cex = 1.2,  horiz = F, inset = c(0, 0.05))
 
@@ -263,7 +303,7 @@ ggplotly(gbox.ggplot)
 
 
 
-#8. Heatmaps ===================================================================
+#9. Heatmaps ===================================================================
 petal.length <- unique(sort(iris$Petal.Length))
 petal.width <- unique(sort(iris$Petal.Width))
 areaPetal <- matrix(data=NA, nrow = length(petal.length), ncol = length(petal.width))
@@ -291,7 +331,7 @@ heatm.plotly <- plot_ly(
   x = petal.width, y =petal.length,
   z = areaPetal, type = "heatmap"
 ) %>% layout(title = "Petal area",
-        yaxis = list(title='Petal Length'),
-        xaxis = list(title='Petal width'))
+             yaxis = list(title='Petal Length'),
+             xaxis = list(title='Petal width'))
 heatm.plotly
 
