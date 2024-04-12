@@ -12,6 +12,7 @@ library(viridis) # for viridis()
 library(heatmaply)
 library(reshape2) # for melt()
 library(pheatmap) # for pheatmap()
+library(gridExtra) # for grid.arrange()
 
 #Load sample data (iris dataset)
 data(iris)
@@ -41,15 +42,20 @@ par(mfrow=c(1,1)) # reset
 
 #b) ggplot2 --------------------------------------------------------------------
 # parameters changed within theme()
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point()
+
 p1 <- ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
   geom_point() +
   theme(panel.background=element_rect(fill="lightblue"),
         plot.margin = unit(c(5.5,5.5,5.5,50), "pt")) # margin order: top, right, bottom, left. default = c(5.5,5.5,5.5,5.5)
+p1
 
 p2 <- ggplot(iris, aes(x=Sepal.Length, y=Petal.Width)) +
   geom_point() +
   theme(panel.background=element_rect(fill="lightblue"),
         plot.margin = unit(c(5.5,5.5,5.5,50), "pt")) # margin order: top, right, bottom, left. default = c(5.5,5.5,5.5,5.5)
+p2
 
 myplots <- list(p1,p2)
 grid.arrange(myplots[[1]], myplots[[2]], ncol=2)
@@ -66,6 +72,7 @@ plot(iris$Petal.Length, iris$Petal.Width, col="#FFA500", pch=16)
 # changing conditionally based on Species
 iris$Species <- as.factor(iris$Species)
 iris$Species
+c("red","blue","green")[iris$Species]
 c("#69b3a2","#404080","#FFA500")[iris$Species]
 
 # change colour depending on Species
@@ -80,7 +87,10 @@ plot(iris$Petal.Length, iris$Petal.Width, col=c("#69b3a2","#404080","#FFA500")[i
 ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
   geom_point(color="#FFA500", shape=3) # default: col='black', pch=16
 
-# just changing colour by Species can be achieved using ggplot(aes(color=Species))
+# Changing colour by Species. Add aes(col=Species) within either ggplot() or geom_point()
+ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
+  geom_point(aes(color=Species))
+
 ggplot(iris, aes(x=Petal.Length, y=Petal.Width, color=Species)) +
   geom_point()
 
@@ -104,7 +114,7 @@ grid(nx = 11, ny = 8)
 scatt.ggplot <- ggplot(iris, aes(x=Petal.Length, y=Petal.Width)) +
   geom_point(color="#FFA500", alpha=0.8, size=3) +
   ggtitle("Petal length and width") +
-  #theme_ipsum() + optional theme
+  #theme_ipsum() + #optional theme
   theme(plot.title = element_text(size=15)) +
   ylab('Petal width') +
   xlab('Petal length')
@@ -198,7 +208,7 @@ multhist.plotly
 plot.new() # create blank plot
 grid(nx = NULL, ny = NULL) # add grid lines
 par(new = TRUE) # to ensure boxplot is added to same plot
-boxplot(Petal.Width ~ Species, data=iris, col=c("#69b3a2", "#FFA500","#404080"), bty='n', xlab="Species", ylab="Petal length", main="base R")
+boxplot(Petal.Width ~ Species, data=iris, col=c("#69b3a2", "#FFA500","#404080"), bty='n', xlab="Species", ylab="Petal width", main="base R")
 legend("bottomright", legend=c("Setosa","Versicolor", "Virginica"), col=c("#69b3a2","#404080","#FFA500"), pt.cex=2, pch=15)
 
 #b) ggplot2 --------------------------------------------------------------------
@@ -207,14 +217,14 @@ box.ggplot <- ggplot(iris, aes(x=Species, y=Petal.Width, fill=Species)) +
   scale_fill_manual(values=c("#69b3a2", "#FFA500","#404080" )) +
   theme(plot.title = element_text(size=15)) +
   ggtitle("ggplot")+
-  ylab('Petal length') +
+  ylab('Petal width') +
   xlab('Species')+
   theme_minimal()
 box.ggplot
 
 #c) plotly ---------------------------------------------------------------------
 # 30 bins
-box.plotly <- plot_ly(iris, x=~Species, y=~Petal.Width, type='box', color=~Species, colors=c("#69b3a2","#404080","#FFA500")) %>% layout(title="Plotly", xaxis=list(title='Sepal Width', showgrid=T), yaxis=list(title='Count', showgrid=T))
+box.plotly <- plot_ly(iris, x=~Species, y=~Petal.Width, type='box', color=~Species, colors=c("#69b3a2","#404080","#FFA500")) %>% layout(title="Plotly", xaxis=list(title='Petal Width', showgrid=T), yaxis=list(title='Count', showgrid=T))
 box.plotly
 
 
@@ -223,23 +233,21 @@ box.plotly
 
 #7. Grouped boxplot ============================================================
 iris$Area <- c(rep(c("Low Area", "Mid Area", "Large Area"),50))
+areas <- c("Large Area", "Mid Area","Low Area" )
 
 #a) base R ---------------------------------------------------------------------
-bop <- boxplot(Petal.Length~Species*Area, data=iris,
+par(mar=c(10, 4.1, 4.1, 2.1))
+boxplot(Petal.Length~Species*Area, data=iris, las=3)
+
+boxplot(Petal.Length~Species*Area, data=iris,
              col = c("#69b3a2","#404080","#FFA500"), 
              main = "Petal area per petal length", 
              xlab = "Area", 
              ylab = "Petal Length",   
              outline = TRUE,    # Optional: Show outliers
              horizontal = FALSE, xaxt = "n")
-areas <- c("Large Area", "Mid Area","Low Area" )
-bop <- axis(1, 
-            at = c(2,5,8.5), 
-            labels = areas, 
-            tick=TRUE , cex=0.3)
-bop <- legend("bottomright", legend = unique(iris$Species), 
-            col=c("#69b3a2","#404080","#FFA500"),
-            pch = 15, bty = "n", pt.cex = 2, cex = 1.2,  horiz = F, inset = c(0, 0.2))
+axis(1, at = c(2,5,8.5), labels = areas, tick=TRUE , cex=0.3)
+legend("bottomright", legend = unique(iris$Species), col=c("#69b3a2","#404080","#FFA500"), pch = 15, bty = "n", pt.cex = 2, cex = 1.2,  horiz = F, inset = c(0, 0.05))
 
 #b) ggplot2 --------------------------------------------------------------------
 gbox.ggplot <- ggplot(iris, aes(x=Area, y=Petal.Length, fill=Species)) + 
@@ -251,7 +259,7 @@ gbox.plotly <- plot_ly(iris, x = interaction(iris$Area,iris$Species), y = iris$P
   layout(title = "Petal area per petal length",yaxis = list(title='Petal Length'),xaxis = list(title='Petal Area',categoryarray = areas))
 gbox.plotly
 
-
+ggplotly(gbox.ggplot)
 
 
 
@@ -266,7 +274,7 @@ for(i in 1:length(petal.length)){
   }
 }
 rownames(areaPetal)<- as.character(petal.length)
-colnames(areaPetal)<- as.character(petal.width )
+colnames(areaPetal)<- as.character(petal.width)
 
 #a) base R/pheatmap ------------------------------------------------------------
 pheatmap(areaPetal, cluster_rows = F, cluster_cols = F, main="Petal area",color = hcl.colors(50, "BluYl"))
