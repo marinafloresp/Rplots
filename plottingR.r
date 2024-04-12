@@ -152,6 +152,7 @@ box.plotly
 
 
 #5. Grouped boxplot ============================================================
+iris$Area <- c(rep(c("Low Area", "Mid Area", "Large Area"),50))
 
 #a) base R ---------------------------------------------------------------------
 bop <- boxplot(Petal.Length~Species*Area, data=iris,
@@ -171,7 +172,6 @@ bop <- legend("bottomright", legend = unique(iris$Species),
             pch = 15, bty = "n", pt.cex = 2, cex = 1.2,  horiz = F, inset = c(0, 0.2))
 
 #b) ggplot2 --------------------------------------------------------------------
-iris$Area <- c(rep(c("Low Area", "Mid Area", "Large Area"),50))
 gbox.ggplot <- ggplot(iris, aes(x=Area, y=Petal.Length, fill=Species)) + 
   geom_boxplot()+ labs(title="Petal area per petal length")+ylab("Petal length" )+scale_fill_manual(values=c("#69b3a2","#404080","#FFA500"))
 gbox.ggplot
